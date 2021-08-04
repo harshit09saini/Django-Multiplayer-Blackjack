@@ -19,7 +19,7 @@
                                     <strong></strong><span id="current-players"></span>
                                 </button>
                                 <div class="uk-position-center uk-inline uk-position-small uk-margin-xlarge-top">
-                                    <p id="alert-move" class="uk-text-muted uk-text-small uk-text-middle">12</p>
+                                    <p id="alert-move" class="uk-text-muted uk-text-small uk-text-middle"></p>
                                 </div>
                                 <a href="{% url 'lobby' %}">
 
@@ -704,15 +704,15 @@
                     // Uncomment at the end
                     // console.log(payload["players_connected"])
                     // Allow game to start when two players are connected
-                    if (payload["players_connected"] != 2) {
-                        $("#alert-move").text("Waiting for Someone to Join the Game")
-                        $("#hit, #stand, #set-bet").prop("disabled", true)
-                        // $("#leave-game").prop("disabled", false)
-                    }
-                    else {
-                        $("#alert-move").text("")
-                        $("#set-bet").prop("disabled", false)
-                    }
+                    // if (payload["players_connected"] != 2) {
+                    //     $("#alert-move").text("Waiting for Someone to Join the Game")
+                    //     $("#hit, #stand, #set-bet").prop("disabled", true)
+                    //     // $("#leave-game").prop("disabled", false)
+                    // }
+                    // else {
+                    //     $("#alert-move").text("")
+                    //     $("#set-bet").prop("disabled", false)
+                    // }
 
                     break;
                 case "PLACE_BET":

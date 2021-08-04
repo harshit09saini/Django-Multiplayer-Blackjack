@@ -43,7 +43,7 @@ class GameRoom(WebsocketConsumer):
         if event == "START":
             self.players.append(self.scope["user"].username)
             response["players"] = self.players
-            response["players_connected"] = len(self.channel_layer.groups.get(self.room_group_name, {}).items())
+            # response["players_connected"] = len(self.channel_layer.groups.get(self.room_group_name, {}).items())
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
