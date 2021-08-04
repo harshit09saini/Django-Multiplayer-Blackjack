@@ -147,8 +147,9 @@
 
     // Adding ReconnectingWebSocket for heroku 
     let ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    let socket = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/ws/game/" + room_code);
+    // let socket = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/ws/game/" + room_code);
 
+    let socket = new WebSocket(ws_scheme + '://' + window.location.host + "/ws/game/" + room_code);
     // Variable Initialization
     let bank = 100;
     let bet = 0;
