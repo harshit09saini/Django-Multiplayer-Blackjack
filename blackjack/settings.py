@@ -110,7 +110,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL'), ("localhost", 6379)],
+            "hosts": [os.environ.get('REDIS_URL', ('redis', 6379)), ("localhost", 6379)],
         },
     },
 }
@@ -150,7 +150,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#location where django collect all static files
+# location where django collect all static files
 STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 
 # location where you will store your static files
@@ -158,7 +158,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Default primary key field type
