@@ -1,0 +1,181 @@
+/* * {
+    border: .1px solid red;
+}*/
+body {
+    background-color: #E4EEF4;
+}
+
+.hero {
+    height: 80vh!important;
+}
+
+.uk-button-default {
+    background-color: #A9BAC6;
+}
+
+/* play.html */
+#game-table {
+    height: 70vh;
+}
+#game-table #playing-area {
+    height: 70%
+}
+#game-table #playing-area > div {
+    height: 100%
+}
+#game-table #playing-area .table-elements {
+    height: 100%;
+}
+
+#game-table #playing-area .table-elements div {
+    height: 100%;
+}
+
+#game-table #info-area {
+    height: 30%
+}
+#game-table #info-area > .uk-grid {
+    margin-left: 0;
+}
+#game-table #info-area .info-area-grid {
+    /* padding: 0; */
+}
+
+
+/* Hit and Stand Button */
+.hit_stand_buttons {
+    margin-left: 0;
+    padding-left: 0;
+}
+.hit_stand_buttons > *{
+    margin-left: 0;
+}
+
+/* Chips */
+
+.chips > .uk-button {
+    width: 110px;
+}
+
+/* Cards */
+
+.playing_card {
+    background: linear-gradient(to bottom right, #F4F4F4, #efefef);
+    width: 10em;
+    height: 16.40em;
+    padding-left: 1em;
+    padding-top: 01em;
+    margin: 0.5em;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 0.4em;
+    display: inline-block;
+    position: relative;
+    top: -100px; 
+    left: -140px; 
+    font-weight: bold;
+}
+
+.playing_card img {
+    width: 2em;
+}
+
+.playing_card h3 {
+    display: inline-block;
+    font-size: 2.75em;
+    padding: 0em;
+    margin: 0.85em 0.4em;
+}
+
+#player_hand {
+    position: fixed;
+    bottom: 1%;
+    left: 25%;
+}
+
+#opponent_hand {
+    position: fixed;
+    right: 10%;
+    bottom: 1%;
+}
+
+#player_hand li,
+#opponent_hand li {
+    margin: 0 -4em;
+}
+
+.flipped {
+    background-image: url("../img/Cards/card_back.cb483b56556e.svg");
+    background-size: auto;
+    z-index: 10;
+    position: relative;
+    top: -50px;
+}
+
+
+
+/* On Medium Screen */
+
+@media only screen and (max-width: 900px) {
+    body {
+        overflow: hidden;
+    }
+
+    .uk-card-badge {
+        visibility: hidden;
+        /* top: 10px;
+        font-size: 0.575rem; */
+    }
+    #game-table {
+        height: 80vh;
+    }
+
+    #set-bet, #clear-bet {
+        display: flex;
+        justify-content: center;
+    }
+  
+    .playing_card {
+        width: 8em;
+        height: 14.40em;
+        padding-left: 1em;
+        padding-top: 01em;
+        margin: 0.5em;
+        top: -100px; 
+        left: -140px; 
+    }
+
+    .playing_card img {
+        width: 1em;
+    }
+
+    .playing_card h3 {
+        display: inline-block;
+        font-size: 2.75em;
+        padding: 0em;
+        margin: 0.65em 0.3em;
+    }
+
+    #player_hand {
+        position: fixed;
+        bottom: 1%;
+        left: 30%;
+    }
+
+    #opponent_hand {
+        position: fixed;
+        right: -3%;
+        bottom: 1%;
+    }
+
+    #player_hand li,
+    #opponent_hand li {
+        margin: 0 -3em;
+    }
+    .flipped {
+        top: -60px;
+    }
+
+    .bank, .bet {
+        font-size: 1.3em;
+    }
+}
