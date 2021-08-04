@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="uk-section">
+
+    <div class="uk-container uk-container-large">
+        <div class="uk-child-width-expand" uk-grid>
+            <div class="uk-width-2-3">
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-header uk-text-center">
+                        <div class="uk-grid-small uk-flex-middle" uk-grid>
+                            <div class="uk-width-expand">
+                                <h3 class="uk-card-title uk-margin-remove-bottom">How to Play</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-card-body">
+                        <ul class="uk-list uk-list-disc uk-list-divider">
+                            <li>The goal of blackjack is to beat the dealer's hand without going over 21.</li>
+                            <li>Face cards are worth 10. Aces are worth 1 or 11, whichever makes a better hand.</li>
+                            <li>Each player starts with two cards, one of the dealer's cards is hidden until the end.
+                            </li>
+                            <li>To 'Hit' is to ask for another card. To 'Stand' is to hold your total and end your
+                                turn.
+                            </li>
+                            <li>If you go over 21 you bust, and the dealer wins regardless of the dealer's hand.</li>
+                            <li>If you are dealt 21 from the start (Ace & 10), you got a blackjack.</li>
+                            <li>Blackjack usually means you win 1.5 the amount of your bet. Depends on the casino.</li>
+                            <li>Dealer will hit until their cards total 17 or higher.</li>
+                        </ul>
+
+                    </div>
+
+                </div>
+            </div>
+            <div>
+                <div class="uk-child-width-1-1 uk-text-center" uk-grid>
+                    <div>
+                        <div class="uk-card uk-card-default uk-card-body">
+                            <div class="uk-card-badge uk-label-success">Online</div>
+                            <h3 class="uk-card-title">Enter a Game</h3>
+                            {% if messages %}
+                            <div class="uk-text-center">
+                                {% for message in messages %}
+                                <p class="uk-text-danger">{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <form action="{% url 'lobby' %}" method="post" novalidate class="room_form">
+                                {% csrf_token %}
+                                <div class="uk-margin">
+                                    <div class="uk-inline uk-width-1-1">
+                                        <span class="uk-form-icon" uk-icon="icon: home"></span>
+                                        {{ form.room_choice }}
+                                        <i class="uk-form-icon uk-form-icon-flip" uk-icon="icon: chevron-down"></i>
+                                    </div>
+                                </div>
+
+                                <div class="uk-margin">
+                                    <div class="uk-inline uk-width-1-1">
+                                        <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                                        {{ form.room_code }}
+                                    </div>
+                                </div>
+
+                                <div class="uk-margin">
+                                    <div class="uk-inline uk-width-1-1">
+                                        <input type="Submit" value="Submit"
+                                               class="uk-button uk-button-secondary uk-width-1-1">
+                                    </div>
+                                </div>
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}

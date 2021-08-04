@@ -1,0 +1,782 @@
+{% extends "base.html" %}
+{% load static %}
+{% static "img/Cards/" as cardBaseImgURL %}
+
+{% block content %}
+<div class="uk-section">
+
+    <div class="uk-container uk-container-medium">
+        <div class="uk-height-large" id="game-table">
+            <div id="playing-area">
+                <div class="uk-card uk-card-default  ">
+                    <div class="uk-flex uk-flex-column uk-height-large table-elements" uk-height-match>
+                        <div class="uk-card uk-card-body">
+                            <div>
+                                <button
+                                    class="uk-button uk-button-primary uk-inline uk-button-small uk-position-top-left uk-position-small"
+                                    disabled>
+                                    Room: <span class="uk-text-bolder">{{ room_code }}</span>, Players:
+                                    <strong></strong><span id="current-players"></span>
+                                </button>
+                                <div class="uk-position-center uk-inline uk-position-small uk-margin-xlarge-top">
+                                    <p id="alert-move" class="uk-text-muted uk-text-small uk-text-middle">12</p>
+                                </div>
+                                <a href="{% url 'lobby' %}">
+
+                                    <button
+                                        class="uk-button uk-button-danger uk-inline uk-button-small uk-position-top-right uk-position-small"
+                                        id="leave-game">Leave Game
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="uk-card uk-card-body uk-child-width-1-2 uk-flex">
+                            <div>
+                                <h3 class="uk-position-top-left uk-margin-medium-left uk-text-lead">Your score: <span
+                                        id="player-score"></span></h3>
+                                <ul class="hand" id="player_hand">
+
+                                </ul>
+
+                            </div>
+                            <div>
+                                <button
+                                    class="uk-button uk-button-primary uk-inline uk-button-medium uk-text-success uk-text-bolder uk-position-center uk-position-small"
+                                    disabled>
+                                    Total Bet: <span id="total-bet">0</span>
+                                </button>
+                            </div>
+                            <div>
+                                <h3 class="uk-position-top-right uk-margin-large-right">Opponent's score: <span
+                                        id="opponent-score"></span></h3>
+                                <ul class="hand" id="opponent_hand">
+                                    <!-- <li class="playing_card undealed-opponent" id="opponent_card">
+                                        <h3 class="uk-position-top-left">5</h3>
+                                    </li>
+                                    <li class="playing_card undealed-opponent" id="opponent_card">
+                                        <h3 class="uk-position-top-left">5</h3>
+                                    </li>
+                                    <li class="playing_card undealed-opponent flipped" id="opponent_card">
+                                    </li> -->
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="uk-card uk-card-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="info-area">
+                <div class="uk-card uk-card-secondary uk-height-1-1 uk-child-width-1-3 uk-flex">
+                    <div
+                        class="info-area-grid uk-position-center-left uk-flex uk-flex-wrap uk-flex-between uk-flex-middle uk-height-1-1 chips ">
+                        <div class="uk-button chip" id="chip-1">
+                            <img src="{% static 'img/SVG_Chips/Casino_Chips_1.svg' %}" width="60px">
+                        </div>
+                        <div class="uk-button chip" id="chip-5"><img
+                                src="{% static 'img/SVG_Chips/Casino_Chips_5.svg' %}" width="60px"></div>
+                        <div class="uk-button chip" id="chip-10"><img
+                                src="{% static 'img/SVG_Chips/Casino_Chips_10.svg' %}" width="60px">
+                        </div>
+                        <div class="uk-button chip" id="chip-50"><img
+                                src="{% static 'img/SVG_Chips/Casino_Chips_50.svg' %}" width="60px">
+                        </div>
+                        <div class="uk-button chip" id="chip-100"><img
+                                src="{% static 'img/SVG_Chips/Casino_Chips_100.svg' %}" width="60px">
+                        </div>
+                        <div class="uk-button chip" id="chip-500"><img
+                                src="{% static 'img/SVG_Chips/Casino_Chips_500.svg' %}" width="60px">
+                        </div>
+                    </div>
+
+                    <div class="info-area-grid uk-flex uk-position-center">
+                        <div class="uk-child-width-1-1  hit_stand_buttons">
+                            <button class="uk-button uk-button-danger uk-button-medium uk-position-small" id="hit">
+                                Hit
+                            </button>
+                            <button class="uk-button uk-button-default uk-button-medium uk-position-small" id="stand">
+                                Stand
+                            </button>
+                        </div>
+                    </div>
+                    <div class="info-area-grid uk-child-width-1-2 uk-position-center-right uk-margin-remove uk-padding-remove"
+                        uk-grid>
+                        <div class="uk-flex uk-flex-column uk-flex-center">
+                            <div>
+                                <h3 class="uk-text-bold bank">Bank: $<span id="bank-value"></span></h3>
+                            </div>
+                            <div>
+                                <h3 class="uk-text-bold bet">Your Bet: $<span id="bet-value"></span></h3>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <button
+                                    class="uk-button uk-button-primary uk-button-medium uk-width-1-1 uk-position-small "
+                                    id="set-bet">
+                                    Set Bet
+                                </button>
+                                <button class="uk-button uk-button-default uk-button-medium uk-position-small "
+                                    id="clear-bet">
+                                    Clear Bet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let room_code = '{{ room_code }}'
+    let username = '{{ username }}'
+
+    // Socket Connection
+    // let socket = new Websocket(`ws://localhost:8000/ws/play/${room_code}`)
+
+    // Original Socket Code for local development
+    // let connectionString = `ws://${window.location.host}/ws/game/${room_code}`;
+    // let socket = new WebSocket(connectionString);
+
+    // Adding ReconnectingWebSocket for heroku 
+    let ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    let socket = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/ws/game/" + room_code);
+
+    // Variable Initialization
+    let bank = 100;
+    let bet = 0;
+    let bets_placed = 0;
+    let is_bet_placed = false
+    let totalBet = 0;
+    let playerTotalScore, opponentTotalScore;
+    let playerCards = [];
+    let opponentCards = [];
+    let currentCardsPlayer = 0;
+    let deck = [];
+    let totalStands = 0;
+
+    // //Avoid right click
+    // document.addEventListener('contextmenu', event => event.preventDefault());
+
+
+    // Creating the deck
+    // Create the class Card with the card's rank and suit.
+    class Card {
+        constructor(number, suit, value) {
+            this._number = number;
+            this._suit = suit;
+            this._value = value;
+        }
+
+        get number() {
+            return this._number;
+        }
+
+        get suit() {
+            return this._suit;
+        }
+
+        get value() {
+            return this._value;
+        }
+    }
+
+    function createDeck() {
+
+        deck = [];
+
+        function createDeck(suit) {
+
+            function createAce(suit) {
+                let cardWord = 'card';
+                let cardNumber = 1;
+                let card = cardWord + cardNumber;
+                card = new Card('A', suit, 11);
+                deck.push(card);
+            }
+
+            function createFacedCards(suit) {
+                let card = 'card' + 11;
+                card = new Card('J', suit, 10);
+                deck.push(card);
+                card = 'card' + 12;
+                card = new Card('Q', suit, 10);
+                deck.push(card);
+                card = 'card' + 13;
+                card = new Card('K', suit, 10);
+                deck.push(card);
+            }
+
+            function createRegularCards(suit) {
+                for (let i = 2; i <= 10; i++) {
+                    let cardWord = 'card';
+                    let cardNumber = i;
+                    let card = cardWord + cardNumber;
+                    card = new Card(i, suit, i);
+                    deck.push(card);
+                }
+            }
+
+            createAce(suit);
+            createRegularCards(suit)
+            createFacedCards(suit);
+
+        }
+        createDeck('hearts');
+        createDeck('diamonds');
+        createDeck('spades');
+        createDeck('clubs');
+
+    }
+    createDeck();
+    // console.log(deck)
+
+    //Check if player has an Ace.
+    function hasAnAce(playerCards) {
+        let aceFound = false;
+        for (i = 0; i < playerCards.length; i++)
+            if (playerCards[i]._value == 11) {
+                aceFound = true;
+                break;
+            }
+        return aceFound;
+    }
+
+    function turnAceToOne(cardsWhereTheAceIs) {
+
+        function findAce(cardToFind) {
+            return cardToFind.value > 10;
+        }
+
+        let indexOfAce = cardsWhereTheAceIs.findIndex(findAce);
+        cardsWhereTheAceIs[indexOfAce]._value = 1;
+        cardsWhereTheAceIs[indexOfAce]._number = 1;
+        playerTotalScore -= 10
+        $("#player-score").text(playerTotalScore);
+        swal("Total value over 21.", "The Ace value becomes 1.");
+    }
+
+    // Deal a card
+    function randomCard() {
+        let selectedCard = Math.round((Math.random() * (deck.length - 1)));
+        let dealedCard = deck[selectedCard];
+        deck.splice((selectedCard), 1);
+        return dealedCard;
+    }
+
+    // Player First Cards
+    // Deal two cards to the player
+    function dealFirstCardsPlayer() {
+        playerCards.push(randomCard(), randomCard());
+        currentCardsPlayer = 2;
+
+        if (add_score(playerCards) > 21 && hasAnAce(playerCards)) {
+            turnAceToOne(playerCards);
+        }
+        if (add_score(playerCards) > 21) {
+            bust();
+        }
+
+    }
+
+
+    // Get proper image based on the card suit
+    function cardObjectToImage(card) {
+        let cardSuit = card._suit
+        if (cardSuit == "hearts") {
+            return '<img src="../static/img/Cards/hearts.svg" />'
+        }
+        if (cardSuit == "diamonds") {
+            return '<img src="../static/img/Cards/diamonds.svg" />'
+        }
+        if (cardSuit == "spades") {
+            return '<img src="../static/img/Cards/spades.svg" />'
+        }
+        if (cardSuit == "clubs") {
+            return '<img src="../static/img/Cards/clubs.svg" />'
+        }
+    }
+
+    // Append card to player hand
+    function addCardtoPlayerHand(card_number) {
+        current_card = playerCards[card_number - 1]
+
+        let card_to_append = $('<li class="playing_card undealed-player" id="player_card">' + cardObjectToImage(current_card) + '<h3 class="uk-position-top-left">' + current_card._number + '</h3></li>');
+        $("#player_hand").append(card_to_append);
+
+    }
+
+    // // Append card to opponent hand
+    function addCardtoOpponentHand(card_number) {
+        current_card = opponentCards[card_number - 1];
+        console.log(current_card);
+        let card_to_append = $('<li class="playing_card undealed-opponent" id="opponent_card">' + cardObjectToImage(current_card) + '<h3 class="uk-position-top-left">' + current_card._number + '</h3></li>');
+        $("#opponent_hand").append(card_to_append);
+
+    }
+
+    function opponentCardHidden() {
+        let card_to_append = $('<li class="playing_card undealed-opponent flipped" id="opponent_card"><h3></h3></li>');
+        $("#opponent_hand").append(card_to_append);
+    }
+
+    // Get Score 
+    function add_score(player_card) {
+        let sum = 0;
+        for (let i = 0; i < player_card.length; i++) {
+            sum += parseInt(player_card[i]._value);
+        }
+        return sum;
+    }
+
+    // Hit 
+    $("#hit").click(function () {
+        playerCards.push(randomCard())
+        currentCardsPlayer++;
+        addCardtoPlayerHand(currentCardsPlayer)
+        if (add_score(playerCards) > 21 && hasAnAce(playerCards)) {
+            turnAceToOne(playerCards);
+        }
+        if (add_score(playerCards) > 21) {
+            bust();
+        }
+        playerTotalScore = parseInt(add_score(playerCards));
+        $("#player-score").text(playerTotalScore);
+    })
+
+    // Stand
+
+    $("#stand").click(function () {
+        data = {
+            "event": "STAND",
+            "player": username,
+            "player-score": playerTotalScore,
+        }
+        socket.send(JSON.stringify(data));
+        $("#hit, #stand, #set-bet").prop("disabled", true)
+    })
+
+    // Bust
+    function bust() {
+        swal("BUST! You Lose", "Better Luck Next Time.", "error")
+        data = {
+            "event": "LOSE",
+            "player": username,
+        }
+        socket.send(JSON.stringify(data));
+
+        gameReset();
+    }
+
+    function gameReset() {
+        console.log("game will be reset now")
+        $("#total-bet").text("");
+        $("#player-score").text("0");
+        $("#opponent-score").text("0");
+        $(".playing_card").remove();
+        $("#set-bet").prop("disabled", false);
+        $("#clear-bet").prop("disabled", false);
+        $("#hit").prop("disabled", true);
+        $("#stand").prop("disabled", true);
+        is_bet_placed = false;
+        totalBet = 0;
+        totalStands = 0;
+        playerTotalScore = null;
+        opponentTotalScore = null;
+        playerCards = [];
+        opponentCards = [];
+        refreshBET()
+        console.log("reset end");
+    }
+
+    // Event Listeners
+    $(document).ready(function () {
+        swal(`Welcome, ${username}`, `Place a bet first.`, {
+            buttons: false,
+            timer: 2000,
+        })
+        // console.log("123")
+        // checkFirstVisit()
+    })
+
+    // Functions for setting the bet
+    function refreshBET() {
+        $("span#bet-value").text(bet);
+        $("span#bank-value").text(bank);
+    }
+    refreshBET();
+
+    function increaseBet(value) {
+        if (bank > 0 && bank >= value) {
+            bank -= value;
+            bet += value;
+            refreshBET();
+        }
+    }
+
+    // Increase Bet depending on the chip clicked
+    $("#chip-1").click(function (e) {
+        increaseBet(1);
+    })
+    $("#chip-5").click(function (e) {
+        increaseBet(5);
+    })
+    $("#chip-10").click(function (e) {
+        increaseBet(10);
+    })
+    $("#chip-50").click(function (e) {
+        increaseBet(50);
+    })
+    $("#chip-100").click(function (e) {
+        increaseBet(100);
+    })
+    $("#chip-500").click(function (e) {
+        increaseBet(500);
+    })
+
+
+    // Clear Bet
+
+    $("#clear-bet").click(function (e) {
+        bank += bet;
+        bet = 0;
+        refreshBET();
+    })
+    // Refresh disconnect
+    // function checkFirstVisit() {
+    //     if (document.cookie.indexOf('mycookie') == -1) {
+    //         // cookie doesn't exist, create it now
+    //         document.cookie = 'mycookie=1';
+    //     }
+    //     else {
+    //         // not first visit, so alert
+    //         socket.send(JSON.stringify({
+    //             "event": "DISCONNECT",
+    //             "player": username,
+    //         }));
+    //     }
+    // }
+
+    // Set Total Bet 
+    // Add the bets of the two players
+    $("#set-bet").click(function (e) {
+        data = {
+            "event": "PLACE_BET",
+            "player": username,
+            "bet": bet,
+        }
+
+        bet = 0;
+        refreshBET();
+        is_bet_placed == true;
+        $("#hit").prop("disabled", false);
+        $("#stand").prop("disabled", false);
+
+        // Deal Cards to the player
+        dealFirstCardsPlayer();
+        // turnDealtCardIntoImg(playerCards[0])
+        addCardtoPlayerHand(1);
+        addCardtoPlayerHand(2);
+        playerTotalScore = parseInt(add_score(playerCards));
+        $("#player-score").text(playerTotalScore);
+        $("#set-bet").prop("disabled", true);
+        $("#clear-bet").prop("disabled", true);
+
+        data[username] = playerCards
+
+        socket.send(JSON.stringify(data))
+
+    })
+    if (is_bet_placed == false) {
+        $("#hit").prop("disabled", true);
+        $("#stand").prop("disabled", true)
+    }
+
+    function placeBet(bet_placed) {
+        totalBet += bet_placed;
+        $('#total-bet').text(totalBet);
+    }
+
+    function showCards(players) {
+        current_player = players[username];
+        delete players[username]
+        current_opponent = players[Object.keys(players)[0]];
+
+        opponentCards = current_opponent
+
+        console.log("========My Cards=====")
+        console.log(current_player)
+        console.log("========Oppenent Cards=====")
+        console.log(opponentCards)
+        if (opponentCards) {
+            addCardtoOpponentHand(1)
+            opponentCardHidden()
+            $("#opponent-score").text(opponentCards[0]._value)
+
+        }
+    }
+
+    let players = [];
+
+    // Show Players on Screen
+    function showPlayers(players) {
+        player_string = ""
+        players.forEach((player, index) => {
+            if (index < players.length - 1) {
+                player_string += player + ","
+            }
+            else {
+                player_string += player
+            }
+        });
+        $("#current-players").text(player_string)
+    }
+
+    // If the opponent lost
+    function didOpponentLose(player) {
+        // Function is called when a player loses. The other player receives the message of winning. 
+        if (player !== username) {
+            swal("Congratulations!", "You win this round.", "success");
+            bank += totalBet;
+            refreshBET();
+            gameReset();
+        }
+    }
+
+    // If the Opponent Won
+    function didOpponentWin(player) {
+        console.log("You Won")
+        if (player !== username) {
+            // console.log("You Lose")
+            swal("You Lose.", "Better Luck Next Time", "error")
+            // refreshBET();
+            // gameReset();
+        }
+    }
+
+    // If Opponent had a blackjack 
+    function OpponentBlackjack(player) {
+        if (player !== username) {
+            swal("You Lose.", "Opponent Had a Blackjack.", "error");
+            refreshBET();
+            gameReset()
+        }
+    }
+
+    // Check for blackjack
+    function isBlackjack(scores) {
+        if (playerTotalScore === 21 && opponentTotalScore === 21) {
+            // swal("Push")
+            data = {
+                "event": "PUSH",
+                "player": username,
+            }
+            socket.send(JSON.stringify(data));
+
+            // gameReset();
+        }
+        else if (playerTotalScore > opponentTotalScore) {
+            swal("Blackjack!", "You Win this round.", "success")
+
+            data = {
+                "event": "BLACKJACK",
+                "player": username,
+            }
+            socket.send(JSON.stringify(data));
+
+            bank += totalBet
+            totalBet = 0
+            refreshBET()
+            gameReset();
+        }
+    }
+
+    function decideWinner(scores) {
+        console.log(scores)
+        if (Object.keys(scores)[0] !== username) {
+            opponentTotalScore = scores[Object.keys(scores)[0]]
+        }
+        // opponent_score = scores[Object.keys(scores)[0]];
+
+        console.log("Player Score")
+        console.log(playerTotalScore)
+        console.log("Opponent Score")
+        console.log(opponentTotalScore)
+
+
+        if (playerTotalScore === 21) {
+            isBlackjack()
+        }
+        else if (playerTotalScore === opponentTotalScore) {
+            data = {
+                "event": "PUSH",
+                "player": username,
+            }
+            socket.send(JSON.stringify(data));
+
+        }
+        else if (playerTotalScore > opponentTotalScore) {
+            console.log({ playerTotalScore, opponentTotalScore })
+            swal("Congratulations!", "You win this round.", "success")
+            data = {
+                "event": "WIN",
+                "player": username,
+            }
+            bank += totalBet
+            totalBet = 0
+            refreshBET()
+            gameReset();
+            socket.send(JSON.stringify(data));
+
+        }
+        else {
+            swal("You Lose", "Better Luck Next Time.", "error")
+            data = {
+                "event": "LOSE",
+                "player": username,
+            }
+            socket.send(JSON.stringify(data));
+
+            gameReset();
+
+        }
+
+    }
+
+    // Push
+    function callPush() {
+        swal("Push.", "You and the Opponent had the same score.", "info");
+        refreshBET();
+        gameReset();
+
+    }
+
+    // Leave Game
+    $("#leave-game").click(function (e) {
+        socket.send(JSON.stringify({
+            "event": "DISCONNECT",
+            "player": username,
+        }));
+    })
+
+    // Main function which handles the connection
+    // of websocket.
+    function connect() {
+        socket.onopen = function open() {
+            // on websocket open, send the START event.
+            socket.send(JSON.stringify({
+                "event": "START",
+                "message": ""
+            }));
+        };
+
+        socket.onclose = function (e) {
+            console.log('Socket is closed.');
+        };
+
+        // Sending the info about the room
+        socket.onmessage = function (e) {
+            // On getting the message from the server
+            // Do the appropriate steps on each event.
+            let response = JSON.parse(e.data)
+            data = response["payload"]
+            console.log(data)
+            event = data["event"]
+            payload = JSON.parse(data["payload"])
+
+
+            switch (event) {
+                case "START":
+                    console.log("Hello");
+                    players = payload["players"]
+                    playerCards = []
+                    opponentCards = []
+                    showPlayers(players);
+
+                    // Uncomment at the end
+                    // console.log(payload["players_connected"])
+                    // Allow game to start when two players are connected
+                    if (payload["players_connected"] != 2) {
+                        $("#alert-move").text("Waiting for Someone to Join the Game")
+                        $("#hit, #stand, #set-bet").prop("disabled", true)
+                        // $("#leave-game").prop("disabled", false)
+                    }
+                    else {
+                        $("#alert-move").text("")
+                        $("#set-bet").prop("disabled", false)
+                    }
+
+                    break;
+                case "PLACE_BET":
+                    console.log("bets" + payload["bets_placed"])
+                    console.log(payload)
+                    console.log(payload["players_cards"])
+                    placeBet(payload["bet"]);
+                    showCards(payload["players_cards"])
+                    break;
+                case "HIT":
+                    console.log(event);
+                    break;
+                case "STAND":
+                    console.log(event)
+                    finalScores = payload["scores"]
+                    totalStands += payload["stand"]
+                    console.log(totalStands)
+
+                    // If both players have clicked on stand, then decide the winner
+                    if (totalStands == 2) {
+                        decideWinner(finalScores)
+                    }
+
+                    break;
+                case "PUSH":
+                    callPush()
+                    break;
+                case "BLACKJACK":
+                    OpponentBlackjack(payload["player"])
+                    break;
+                case "WIN":
+                    didOpponentWin(payload["player"])
+                    break;
+                case "LOSE":
+                    console.log(payload);
+                    // If any player loses, it broadcasts the loss of the player to the opponent. 
+                    didOpponentLose(payload["player"])
+                    break;
+                case "DISCONNECTED":
+                    player_to_remove = payload["player"]
+                    let index = players.indexOf(player_to_remove)
+                    if (index > -1) {
+                        players.splice(index, 1)
+                    }
+                    opponentCards = []
+                    playerCards = []
+                    my_score = 0
+                    opponent_score = 0
+                    showPlayers(players)
+                    swal(payload["message"])
+                    gameReset()
+                    bank = 100
+
+                // Reset the game
+                default:
+                    console.log("No Event");
+            }
+        };
+
+        if (socket.readyState == WebSocket.OPEN) {
+            socket.onopen();
+        }
+    }
+
+    //call the connect function at the start.
+    connect();
+</script>
+{% endblock %}
